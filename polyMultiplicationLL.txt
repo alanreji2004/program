@@ -1,0 +1,116 @@
+//Polynomial Multiplication using Linked List
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node{
+    int coef,expo;
+    struct node *link;
+};
+
+struct node *Phead, *Qhead, *Rhead;
+
+struct node * ReadPoly(){
+    struct node *new,*ptr,*head=NULL;
+    int n,i;
+
+    printf("\nEnter the total number of terms in the polynomial: ");
+    scanf("%d",&n);
+
+    printf("Enter the COEFFICIENTS and EXPONENTS of the polynomial: ");
+    for(i=1;i<=n;i++){
+        printf("Enter (coerf%d, expo%d)",i,i);
+        new=(struct node *)malloc(sizeof(struct node));
+        scanf("%d",&new->coef);
+        scanf("%d",&new->expo);
+        new->link=NULL;
+        if(head==NULL){
+            head=new;
+            ptr=head;
+        }
+        else{
+            ptr->link=new;
+            ptr=new;
+        }
+    }
+    return(head);
+}
+
+void DisplayPoly(struct node *head){
+    struct node *ptr;
+    if(head==NULL)
+        printf("Polynomial is Empty");
+    else{
+        ptr=head;
+        while(ptr->link!=NULL){
+            printf("%dx^%d + ",ptr->coef,ptr->expo);
+            ptr=ptr->link;
+        }
+        printf("%dx^%d\t",ptr->coef,ptr->expo);
+    }
+}
+
+struct node * MulPoly(){
+   struct node *new,*P,*Q,*R,*prev,*head=NULL;
+   P=Phead;
+   Q=Qhead;
+   while(P!=NULL){
+    while(Q!=NULL){
+        new=(struct node *)malloc(sizeof(struct node));
+        new->coef=P->coef*Q->coef;
+        new->expo=P->expo+Q->expo;
+        new->link=NULL;
+        if(head==NULL){
+            head=new;
+            R=head;
+        }
+        else{
+            R->link=new;
+            R=new;
+        }
+        Q=Q->link;
+    }
+    P=P->link;
+    Q=Qhead;
+   }
+
+   P=head;
+
+   while(P!=NULL){
+    prev=P;
+    Q=P->link;
+    while(Q!=NULL){
+        if(P->expo==Q->expo){
+            P->coef=P->coef+Q->coef;
+            prev->link=Q->link;
+            free(Q);
+            Q=prev->link;
+        }
+        else{
+            prev=Q;
+            Q=Q->link;
+        }
+    }
+    P=P->link;
+   }
+   return(head);
+}
+
+void main(){
+    // read the first polynomial
+    printf("\nEnter the details of First polynomial : ");
+    Phead=ReadPoly();
+
+    // read the second polynomial
+    printf("\n\nEnter the details of Second polnomial : ");
+    Qhead=ReadPoly();
+
+    printf("\nFirst polynomial : ");
+    DisplayPoly(Phead);
+    printf("\nSecond polynomial : ");
+    DisplayPoly(Qhead);
+
+    // Multiply two polynomials
+    Rhead=MulPoly();
+    printf("\nResultant polynomial(PRODUCT) : ");
+    DisplayPoly(Rhead);
+}
